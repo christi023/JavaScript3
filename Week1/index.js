@@ -31,10 +31,10 @@
   }
 
   // Header
-  function selectOptions(nameOption) {
+  function selectOptions(nameOptions) {
     const repoSelect = document.getElementById('repoSelect');
-    for (let i = 0; i < nameOption.length; i++) {
-      createAndAppend('option', repoSelect, { value: i, text: nameOption[i].name });
+    for (let i = 0; i < nameOptions.length; i++) {
+      createAndAppend('option', repoSelect, { value: i, text: nameOptions[i].name });
     }
   }
 
@@ -64,7 +64,7 @@
 
   // Contributors
   function contributorsList(element) {
-    fetchJSON(element.contributor_url, (err, data) => {
+    fetchJSON(element.contributors_url, (err, data) => {
       const container = document.getElementById('container');
       createAndAppend('div', container, {
         id: 'rightSide',
@@ -79,18 +79,16 @@
         id: 'list',
         class: 'contributor-list',
       });
-      let contributorURL;
-      let contributorItem;
-      let contributorData;
+      
       const list = document.getElementById('list');
       for (let i = 0; i < data.length; i++) {
-        contributorURL = createAndAppend('a', list, { href: data[i].html_url, target: '_blank' });
-        contributorItem = createAndAppend('li', contributorURL, { class: 'contributor-item' });
+        const contributorsURL = createAndAppend('a', list, { href: data[i].html_url, target: '_blank' });
+        const contributorItem = createAndAppend('li', contributorsURL, { class: 'contributor-item' });
         createAndAppend('img', contributorItem, {
           src: data[i].avatar_url,
           class: 'contributor-avatar',
         });
-        contributorData = createAndAppend('div', contributorItem, { class: 'contributor-data' });
+        const contributorData = createAndAppend('div', contributorItem, { class: 'contributor-data' });
         createAndAppend('div', contributorData, { text: data[i].login });
         createAndAppend('div', contributorData, {
           text: data[i].contributions,
@@ -111,20 +109,20 @@
         createAndAppend('h7', top, { id: 'title', text: 'HYF Repositories' });
         createAndAppend('select', top, { id: 'repoSelect', class: 'repo-selector' });
         createAndAppend('div', root, { id: 'container' });
-        data.sort((a, b) => a.name.localCompare(b.name));
+        data.sort((a, b) => a.name.localeCompare(b.name));
         selectOptions(data);
         displayInfo(data[0]);
         contributorsList(data[0]);
 
         document.getElementById('repoSelect').onchange = function startListener() {
-          const selectItem = this.options[this.selectedIndex].value;
+          const selectedItem = this.options[this.selectedIndex].value;
           const leftSideInfo = document.getElementById('leftSide');
           leftSideInfo.parentNode.removeChild(leftSideInfo);
           const contributors = document.getElementById('rightSide');
-          contributors.parentNode.removeChild('contributors');
+          contributors.parentNode.removeChild(contributors);
 
-          displayInfo(data[selectItem]);
-          contributorsList(data[selectItem]);
+          displayInfo(data[selectedItem]);
+          contributorsList(data[selectedItem]);
         };
       }
     });
