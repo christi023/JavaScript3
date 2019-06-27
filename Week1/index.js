@@ -82,8 +82,8 @@
       
       const list = document.getElementById('list');
       for (let i = 0; i < data.length; i++) {
-        const contributorsURL = createAndAppend('a', list, { href: data[i].html_url, target: '_blank' });
-        const contributorItem = createAndAppend('li', contributorsURL, { class: 'contributor-item' });
+        const contributorURL = createAndAppend('a', list, { href: data[i].html_url, target: '_blank' });
+        const contributorItem = createAndAppend('li', contributorURL, { class: 'contributor-item' });
         createAndAppend('img', contributorItem, {
           src: data[i].avatar_url,
           class: 'contributor-avatar',
