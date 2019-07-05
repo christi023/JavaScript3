@@ -1,19 +1,20 @@
 'use strict';
 
 {
-  function fetchJSON(url, cb) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', url);
-    xhr.responseType = 'json';
-    xhr.onload = () => {
-      if (xhr.status < 400) {
-        cb(null, xhr.response);
-      } else {
-        cb(new Error(`Network error: ${xhr.status} - ${xhr.statusText}`));
-      }
-    };
-    xhr.onerror = () => cb(new Error('Network request failed'));
-    xhr.send();
+  function fetchJSON(url) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url);
+      xhr.responseType = 'json';
+      xhr.onload = () => {
+        if (xhr.status < 400) {
+          resolve(xhr.response);
+        } else {
+          reject(new Error(`Network error: ${xhr.status} - ${xhr.statusText}`));
+        }
+      };
+      xhr.send();
+    });
   }
 
   function createAndAppend(name, parent, options = {}) {
@@ -64,7 +65,7 @@
 
   // Contributors
   function contributorsList(element) {
-    fetchJSON(element.contributors_url, (err, data) => {
+    fetchJSON(element.contributors_url).then(data => {
       const container = document.getElementById('container');
       createAndAppend('div', container, {
         id: 'rightSide',
@@ -107,11 +108,12 @@
 
   // Main Function
   function main(url) {
-    fetchJSON(url, (err, data) => {
-      const root = document.getElementById('root');
-      if (err) {
-        createAndAppend('div', root, { text: err.message, class: 'alert-error' });
-      } else {
+    const root = document.getElementById('root');
+    fetchJSON(url)
+      .catch(reject => {
+        createAndAppend('div', root, { text: reject.message, class: 'alert-error' });
+      })
+      .then(data => {
         createAndAppend('header', root, { id: 'top', class: 'header' });
         const top = document.getElementById('top');
         createAndAppend('h7', top, { id: 'title', text: 'HYF Repositories' });
@@ -132,8 +134,7 @@
           displayInfo(data[selectedItem]);
           contributorsList(data[selectedItem]);
         };
-      }
-    });
+      });
   }
 
   const HYF_REPOS_URL = 'https://api.github.com/orgs/HackYourFuture/repos?per_page=100';
