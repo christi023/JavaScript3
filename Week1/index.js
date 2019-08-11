@@ -79,23 +79,16 @@
         id: 'list',
         class: 'contributor-list',
       });
-
+      
       const list = document.getElementById('list');
       for (let i = 0; i < data.length; i++) {
-        const contributorURL = createAndAppend('a', list, {
-          href: data[i].html_url,
-          target: '_blank',
-        });
-        const contributorItem = createAndAppend('li', contributorURL, {
-          class: 'contributor-item',
-        });
+        const contributorURL = createAndAppend('a', list, { href: data[i].html_url, target: '_blank' });
+        const contributorItem = createAndAppend('li', contributorURL, { class: 'contributor-item' });
         createAndAppend('img', contributorItem, {
           src: data[i].avatar_url,
           class: 'contributor-avatar',
         });
-        const contributorData = createAndAppend('div', contributorItem, {
-          class: 'contributor-data',
-        });
+        const contributorData = createAndAppend('div', contributorItem, { class: 'contributor-data' });
         createAndAppend('div', contributorData, { text: data[i].login });
         createAndAppend('div', contributorData, {
           text: data[i].contributions,
@@ -105,7 +98,6 @@
     });
   }
 
-  // Main Function
   function main(url) {
     fetchJSON(url, (err, data) => {
       const root = document.getElementById('root');
